@@ -51,10 +51,12 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 	int selectedRow;
 	SaleOrderManagerJPanel parentPanel;
 
+
 	// 用户对象
 	User user;
 
 	public AddSaleOrderJFrame(User user, SaleOrderManagerJPanel parentPanel) {
+
 		this.user = user;
 		this.parentPanel = parentPanel;
 
@@ -210,6 +212,7 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 							if (tempresult > 0) {
 								JOptionPane.showMessageDialog(null, "销售单添加成功");
 								this.setVisible(false);
+								
 								parentPanel.refreshTablePanel();
 							}
 						}

@@ -1,43 +1,31 @@
 package org.lqz.module.view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableColumnModel;
-import org.lqz.module.view.*;
-import org.jb2011.lnf.beautyeye.ch3_button.BEButtonUI;
+
 import org.lqz.framework.util.BaseTableModule;
-import org.lqz.framework.util.ImagePanel;
-import org.lqz.framework.util.MyFont;
 import org.lqz.framework.util.Tools;
-import org.lqz.main.Entrance;
 import org.lqz.module.entity.User;
-import org.lqz.module.services.Impl.UserServiceImpl;
+import org.lqz.module.services.Impl.WarehouseServiceImpl;
 
 /**
  * 用户管理功能面板
  */
 
-public class UserManagerJPanel  {
+public class UserManagerJPanel implements MouseListener  {
 
 	// 定义全局组件
 	JPanel backgroundPanel, topPanel, toolPanel, tablePanel,tablePanel1;
@@ -80,7 +68,7 @@ public class UserManagerJPanel  {
 		Icon icon_modify = new ImageIcon("image/modify.png");
 		tool_modify = new JLabel(icon_modify);
 		tool_modify.setToolTipText("修改个人信息");
-	//	tool_modify.addMouseListener();
+		tool_modify.addMouseListener(this);
 
 		Icon icon_delete = new ImageIcon("image/delete.png");
 		tool_delete = new JLabel(icon_delete);
@@ -197,7 +185,10 @@ public class UserManagerJPanel  {
 	//	}
 		
 		if (e.getSource() == tool_modify) {
-		new	 EmployeeUserManagerJPanel(user,null);
+			new ModifyUserInfomationJFrame(user, this);
+	//	new	 EmployeeUserManagerJPanel();
+		
+	//	 new EmployeeUserManagerJPanel(user, EmployeeUserManagerJFrame).backgroundPanel);
 
 		} /*else if (e.getSource() == tool_delete) {
 			int row = table.getSelectedRow();
@@ -224,7 +215,7 @@ public class UserManagerJPanel  {
 	}
 
 	// 鼠标划入事件
-/*	@Override
+	@Override
 	public void mouseEntered(MouseEvent e) {
 		if (e.getSource() == tool_add) {
 			tool_add.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -252,7 +243,7 @@ public class UserManagerJPanel  {
 		// TODO Auto-generated method stub
 
 	}
-*/
+
 }
 
 	
