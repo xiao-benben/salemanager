@@ -11,6 +11,7 @@ import javax.swing.*;
 import org.lqz.framework.util.ImagePanel;
 import org.lqz.framework.util.MyFont;
 import org.lqz.framework.util.WindowOpacity;
+import org.lqz.main.Entrance;
 import org.lqz.module.entity.User;
 
 public class EmployeeIndexJFrame extends JFrame implements MouseListener, ActionListener {
@@ -31,6 +32,7 @@ public class EmployeeIndexJFrame extends JFrame implements MouseListener, Action
 	// 定义全局组件
 	JPanel backgroundPanel, topPanel, topMenu, topPrompt, centerPanel, subPanel, subMenu;
 	JTabbedPane jTabbedPane;
+	JButton logout;
 
 	JLabel home, stock, sale, userManager;
 
@@ -98,9 +100,9 @@ public class EmployeeIndexJFrame extends JFrame implements MouseListener, Action
 
 		home = CreateMenuLabel(home, nameStrings[0], "home", topMenu);
 		home.setName("home");
-		stock = CreateMenuLabel(stock, nameStrings[1], "stock", topMenu);
+		stock = CreateMenuLabel(stock, nameStrings[1], "baseData", topMenu);
 		stock.setName("stock");
-		sale = CreateMenuLabel(sale, nameStrings[2], "sale", topMenu);
+		sale = CreateMenuLabel(sale, nameStrings[2], "purchase_sale_stock", topMenu);
 		sale.setName("sale");
 		userManager = CreateMenuLabel(userManager, nameStrings[3], "userManager", topMenu);
 		userManager.setName("userManager");
@@ -109,7 +111,7 @@ public class EmployeeIndexJFrame extends JFrame implements MouseListener, Action
 	// 创建顶部菜单Label
 	public JLabel CreateMenuLabel(JLabel jlabel, String text, String name, JPanel jpanel) {
 		JLabel line = new JLabel("<html>&nbsp;<font color='#D2D2D2'>|</font>&nbsp;</html>");
-		Icon icon = new ImageIcon("image/" + "employee" + name + ".png");
+		Icon icon = new ImageIcon("image/"  + name + ".png");
 		jlabel = new JLabel(icon);
 		jlabel.setText("<html><font color='black'>" + text + "</font>&nbsp;</html>");
 		jlabel.addMouseListener(this);
@@ -127,16 +129,21 @@ public class EmployeeIndexJFrame extends JFrame implements MouseListener, Action
 		Icon icon = new ImageIcon("image/male.png");
 		JLabel label = new JLabel(icon);
 		if (user != null) {
-			label.setText("<html><font color='black'>欢迎您，</font><font color='#336699'><b>" + this.user.getName()
+			label.setText("<html><font color='black'>欢迎您，</font><font color='#336699'><b>" + this.user.getUserName()
 					+ "</b></font></html>");
 		} else {
 			label.setText("<html><font color='black'>欢迎您，</font><font color='#336699'><b></b></font></html>");
 		}
 		label.setFont(MyFont.Static);
+		
+		logout = new JButton("注销");
+		logout.addMouseListener(this);
+		
 		topPrompt = new JPanel();
-		topPrompt.setPreferredSize(new Dimension(180, 40));
+		topPrompt.setPreferredSize(new Dimension(230, 40));
 		topPrompt.setOpaque(false);
 		topPrompt.add(label);
+		topPrompt.add(logout);
 	}
 
 	// 初始化中心面板
@@ -194,9 +201,9 @@ public class EmployeeIndexJFrame extends JFrame implements MouseListener, Action
 		jTabbedPane.setFont(MyFont.Static);
 
 		//jTabbedPane.addTab("销售单", new SaleOrderManagerJPanel(user).backgroundPanel);
-		//jTabbedPane.addTab("入库单", new StockInputManagerJPanel(user).backgroundPanel);
+		jTabbedPane.addTab("销售记录", new SaleOrderManagerJPanel(user).backgroundPanel);
 		//jTabbedPane.addTab("仓库管理", new WarehouseManagerJPanel().backgroundPanel);
-		jTabbedPane.addTab("销售记录", new WarehouseManagerJPanel().backgroundPanel);
+		//jTabbedPane.addTab("销售记录", new WarehouseManagerJPanel().backgroundPanel);
 
 		centerPanel.add(jTabbedPane, "Center");
 	}
@@ -251,7 +258,10 @@ public class EmployeeIndexJFrame extends JFrame implements MouseListener, Action
 			home.setText("<html><font color='black'>" + "首页" + "</font>&nbsp;</html>");
 			stock.setText("<html><font color='black'>" + "库存" + "</font>&nbsp;</html>");
 			sale.setText("<html><font color='black'>" + "销售管理" + "</font>&nbsp;</html>");
-		}else {
+		} else if(e.getSource() == logout) {
+			this.setVisible(false);
+			Entrance.main(null);
+		} else {
 			System.out.println("ok");
 		}
 

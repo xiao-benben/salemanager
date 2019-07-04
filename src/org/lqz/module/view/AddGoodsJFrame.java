@@ -21,9 +21,13 @@ import javax.swing.JTextField;
 import org.jb2011.lnf.beautyeye.ch3_button.BEButtonUI;
 import org.lqz.framework.util.Item;
 import org.lqz.framework.util.MyFont;
-import org.lqz.module.services.Impl.CategoryServiceImpl;
+import org.lqz.module.entity.Classification;
+import org.lqz.module.entity.Warehouse;
+import org.lqz.module.services.Impl.*;
 import org.lqz.module.services.Impl.GoodsServiceImpl;
 import org.lqz.module.services.Impl.WarehouseServiceImpl;
+
+import com.sun.xml.internal.bind.v2.model.impl.ClassInfoImpl;
 
 public class AddGoodsJFrame extends JFrame implements MouseListener {
 
@@ -97,8 +101,8 @@ public class AddGoodsJFrame extends JFrame implements MouseListener {
 
 		// 商品种类下拉框
 		category = new JComboBox();
-		CategoryServiceImpl categoryService = new CategoryServiceImpl();
-		List<Object[]> list_category = null;
+	    ClassificationServiceImpl categoryService = new ClassificationServiceImpl();
+		List<Object []> list_category = null;
 		try {
 			list_category = categoryService.selectAll();
 		} catch (Exception e) {
@@ -116,7 +120,7 @@ public class AddGoodsJFrame extends JFrame implements MouseListener {
 		// 仓库下拉框
 		warehouse = new JComboBox();
 		WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
-		List<Object[]> list_warehouse = null;
+		List<Warehouse> list_warehouse = null;
 		try {
 			list_warehouse = warehouseService.selectAll();
 		} catch (Exception e) {
@@ -125,8 +129,8 @@ public class AddGoodsJFrame extends JFrame implements MouseListener {
 		if (list_warehouse != null) {
 			int sign = 0;
 			for (int i = 0; i < list_warehouse.size(); i++) {
-				String id = (String) list_warehouse.get(i)[0];
-				String name = (String) list_warehouse.get(i)[1];
+				String id = (String) list_warehouse.get(i).getWarehouseId();
+				String name = (String) list_warehouse.get(i).getWarehouseName();
 				warehouse.addItem(new Item(id, name));
 			}
 		}

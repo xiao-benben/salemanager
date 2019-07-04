@@ -28,21 +28,22 @@ import org.jb2011.lnf.beautyeye.ch3_button.BEButtonUI;
 import org.lqz.framework.util.BillNo;
 import org.lqz.framework.util.Item;
 import org.lqz.framework.util.MyFont;
+import org.lqz.main.Entrance;
 import org.lqz.module.entity.User;
 import org.lqz.module.services.Impl.GoodsServiceImpl;
-import org.lqz.module.services.Impl.SaleOrderServiceImpl;
-import org.lqz.module.services.Impl.StockOrderServiceImpl;
+import org.lqz.module.services.Impl.*;
+import org.lqz.module.services.Impl.UserServiceImpl;
 
 
 
 //暂时没有实现接口
 //implements MouseListener , ActionListener
-	public class ModifyUserInfomationJFrame extends JFrame  {
+	public class ModifyUserInfomationJFrame extends JFrame implements MouseListener {
 
 		// 定义全局组件
 		JPanel backgroundPanel, labelPanel, contentPanel, buttonPanel;
 		JLabel label_name, label_password, label_identify;
-		JButton button_modify;
+		JButton button_modify,button_save;
 		JTextField name = new JTextField(10);
 		JPasswordField password = new JPasswordField(10);
 		JTextField identify = new JTextField(10);
@@ -62,11 +63,13 @@ import org.lqz.module.services.Impl.StockOrderServiceImpl;
 
 		// 用户对象
 		User user;
+		JFrame jframe;
 
-		public ModifyUserInfomationJFrame(User user, UserManagerJPanel parentPanel) {
+		public ModifyUserInfomationJFrame(User user, UserManagerJPanel parentPanel,JFrame jframe) {
 
 			this.user = user;
 			this.parentPanel = parentPanel;
+			this.jframe = jframe;
 
 			initBackgroundPanel();
 
@@ -114,12 +117,12 @@ import org.lqz.module.services.Impl.StockOrderServiceImpl;
 			label_identify = new JLabel("身份", JLabel.CENTER);
 			label_identify.setFont(MyFont.Static);
 			if (user != null) {
-				name.setText(user.getName());
-				password.setText(user.getPassword());
+				name.setText(user.getUserName());
+				password.setText(user.getUserPassword());
 				String identifyString = "";
-				if (user.getIdentity().equals("1")) {
+				if (user.getUserIdentity() == 1) {
 					identifyString = "管理员";
-				} else if (user.getIdentity().equals("0")) {
+				} else if (user.getUserIdentity() == 0) {
 					identifyString = "普通员工";
 				}
 				identify.setText(identifyString);
@@ -150,136 +153,107 @@ import org.lqz.module.services.Impl.StockOrderServiceImpl;
 			button_modify.setUI(new BEButtonUI().setNormalColor(BEButtonUI.NormalColor.lightBlue));
 			button_modify.setForeground(Color.white);
 			button_modify.setFont(MyFont.Static);
-	//		button_modify.addMouseListener(this);
+			button_modify.addMouseListener(this);
 
 			buttonPanel.add(button_modify);
 		}
+		public void modifyUserContentPanel() {
 
-		// 鼠标点击事件
-	//	@Override
-	/*	public void mouseClicked(MouseEvent e) {
-			if (e.getSource() == button_add) {
+			name.setEditable(true);
+			password.setEditable(true);
 
-				String amount_String = amount.getText().trim();
-				String name = ((Item) select_name.getSelectedItem()).getKey();
-				if ("请选择".equals(name)) {
-					JOptionPane.showMessageDialog(null, "请选择销售商品");
-				} else if (amount_String.isEmpty()) {
-					JOptionPane.showMessageDialog(null, "请输入销售数量");
+			button_save = new JButton("保存修改");
+			button_save.setUI(new BEButtonUI().setNormalColor(BEButtonUI.NormalColor.green));
+			button_save.setForeground(Color.white);
+			button_save.setFont(MyFont.Static);
+			button_save.addMouseListener(this);
+
+			buttonPanel.removeAll();
+			buttonPanel.add(button_save);
+
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getSource() == button_modify) {
+				/**
+				 * parentComponent 对话框所在的容器 
+					message 提示消息 
+					title 标题 
+					optionType 选择按钮类型 
+					JOptionPane.showConfirmDialog(parentComponent, message, title, optionType) 
+				 */
+				String input_password = (String) JOptionPane.showInputDialog(null, "请输入原始密码", "用户验证",
+						JOptionPane.PLAIN_MESSAGE);
+				if (input_password.trim().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "原始密码不能为空");
 				} else {
-					double amount_double = Double.valueOf(amount_String);
-					if (amount_double > goods_stock) {
-						JOptionPane.showMessageDialog(null, "商品库存不足");
+					if (user != null) {
+						if (!input_password.equals(user.getUserPassword())) {
+							JOptionPane.showMessageDialog(null, "原始密码有误");
+						} else {
+							JOptionPane.showMessageDialog(null, "验证通过，请您修改信息");
+							modifyUserContentPanel();
+						}
 					} else {
-						int result = 0;
-						String id = UUID.randomUUID().toString().replaceAll("-", "");
-						String billno = BillNo.getBillNo();
-						String handlerId = null;
-						if (user != null) {
-							handlerId = user.getId();
-						}
-						String warehouseId = ((Item) select_warehouse.getSelectedItem()).getKey();
-						String categoryId = ((Item) select_category.getSelectedItem()).getKey();
-						Object[] params = { id, billno, handlerId, categoryId, warehouseId, amount_double, name };
-						SaleOrderServiceImpl saleOrderService = new SaleOrderServiceImpl();
-						try {
-							result = saleOrderService.insert(params);
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-						if (result > 0) {
-
-							// 添加出库单
-							int outputresult = 0;
-
-							String outputId = UUID.randomUUID().toString().replaceAll("-", "");
-							String outputBillno = BillNo.getBillNo();
-							Object[] outputParams = { outputId, outputBillno, handlerId, warehouseId, categoryId,
-									amount_double, name };
-							StockOrderServiceImpl stockOrderService = new StockOrderServiceImpl();
-							try {
-								outputresult = stockOrderService.insertStockOutput(outputParams);
-							} catch (Exception e1) {
-								e1.printStackTrace();
-							}
-							if (outputresult > 0) {
-								int tempresult = 0;
-								GoodsServiceImpl goodsService = new GoodsServiceImpl();
-								Object[] tempparams = { -amount_double, name };
-								try {
-									tempresult = goodsService.updateStockById(tempparams);
-								} catch (Exception e1) {
-									e1.printStackTrace();
-								}
-								if (tempresult > 0) {
-									JOptionPane.showMessageDialog(null, "销售单添加成功");
-									this.setVisible(false);
-									
-								//	parentPanel.refreshTablePanel();
-								}
-							}
-						}
+						JOptionPane.showMessageDialog(null, "登录超时，请您重新登录");
+					//	parentPanel.setVisible(false);
+						Entrance.main(null);
 					}
 				}
 			}
-
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseExited(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mousePressed(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		// 下拉框改变事件
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == select_name) {
-				String id = ((Item) select_name.getSelectedItem()).getKey();
-				Object[] params = { id };
-				GoodsServiceImpl goodsService = new GoodsServiceImpl();
-				List<Object[]> list_goods = new ArrayList();
-				try {
-					list_goods = goodsService.selectById(params);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				if (!list_goods.isEmpty()) {
-					for (Object[] object : list_goods) {
-						double amount_double = (Double) object[4];
-						this.goods_stock = amount_double;
-						String amount_String = String.valueOf(amount_double);
-						amount.setText(amount_String);
-						select_category.removeAllItems();
-						select_category.addItem(new Item((String) object[0], (String) object[1]));
-						select_warehouse.removeAllItems();
-						select_warehouse.addItem(new Item((String) object[2], (String) object[3]));
+			if (e.getSource() == button_save) {
+				String string_username = name.getText().trim();
+				String string_password = password.getText().trim();
+				if (string_username.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "用户名不能为空");
+				} else if (string_password.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "用户密码不能为空");
+				} else {
+					String params[] = { name.getText(), password.getText(), user.getUserId() };
+					UserServiceImpl userService = new UserServiceImpl();
+					int result = 0;
+					try {
+						result = userService.updateUserById(params);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					if (result > 0) {
+						JOptionPane.showMessageDialog(null, "用户信息修改成功,请您重新登陆");
+						this.setVisible(false);
+						jframe.setVisible(false);
+						Entrance.main(null);
 					}
 				}
+
 			}
 		}
 
-		*/
-		
-		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+	
 		
 
 

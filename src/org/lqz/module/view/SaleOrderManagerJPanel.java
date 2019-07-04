@@ -24,10 +24,10 @@ import javax.swing.table.DefaultTableColumnModel;
 import org.lqz.framework.util.BaseTableModule;
 import org.lqz.framework.util.Item;
 import org.lqz.framework.util.Tools;
+import org.lqz.module.entity.Classification;
 import org.lqz.module.entity.User;
-import org.lqz.module.services.Impl.CategoryServiceImpl;
-import org.lqz.module.services.Impl.SaleOrderServiceImpl;
-import org.lqz.module.services.Impl.WarehouseServiceImpl;
+import org.lqz.module.entity.Warehouse;
+import org.lqz.module.services.Impl.*;
 
 public class SaleOrderManagerJPanel implements ActionListener, MouseListener, DocumentListener {
 
@@ -45,7 +45,6 @@ public class SaleOrderManagerJPanel implements ActionListener, MouseListener, Do
 
 	public SaleOrderManagerJPanel(User user) {
 		this.user = user;
-
 		backgroundPanel = new JPanel(new BorderLayout());
 
 		initTopPanel();
@@ -91,7 +90,7 @@ public class SaleOrderManagerJPanel implements ActionListener, MouseListener, Do
 
 		// 商品种类下拉框
 		select_category = new JComboBox();
-		CategoryServiceImpl categoryService = new CategoryServiceImpl();
+		ClassificationServiceImpl categoryService = new ClassificationServiceImpl();
 		List<Object[]> list_category = null;
 		try {
 			list_category = categoryService.selectAll();
@@ -140,13 +139,18 @@ public class SaleOrderManagerJPanel implements ActionListener, MouseListener, Do
 
 	// 初始化数据表格面板
 	public void initTablePanel() {
-
-		String conditionParams[] = { "", "全部", "全部" };
-		String params[] = { "销售单id", "订单号", "商品名称", "销售数量", "所属分类", "所属仓库", "经手人", "分类id", "仓库id" };
-		SaleOrderServiceImpl saleOrderService = new SaleOrderServiceImpl();
+		String[] conditionParams;
+		if(user.getUserIdentity() == 0) {
+			conditionParams = new String[] { "", "全部", "全部", user.getUserId(), "0"};
+		}
+		else {
+			conditionParams = new String[] { "", "全部", "全部", user.getUserId(), "1"};
+		}
+		String params[] = { "销售单id", "订单号", "商品名称", "销售数量", "所属分类", "所属仓库", "经手人", "销售额","销售日期","商品id", "分类id", "仓库id","用户id" };
+		SaleslistServiceImpl saleOrderService = new SaleslistServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-			vector = saleOrderService.selectByCondition(conditionParams);
+			vector = saleOrderService.selectSaleslistByCondition(conditionParams);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -156,12 +160,17 @@ public class SaleOrderManagerJPanel implements ActionListener, MouseListener, Do
 		table = new JTable(baseTableModule);
 		Tools.setTableStyle(table);
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
-		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(0).setMinWidth(0); // 将第1列的最小宽度、最大宽度都设置为0
 		dcm.getColumn(0).setMaxWidth(0);
-		dcm.getColumn(7).setMinWidth(0); // 将第8列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(7).setMaxWidth(0);
-		dcm.getColumn(8).setMinWidth(0); // 将第9列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(8).setMaxWidth(0);
+		dcm.getColumn(9).setMinWidth(0); // 将第10列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(9).setMaxWidth(0);
+		dcm.getColumn(10).setMinWidth(0); // 将第11列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(10).setMaxWidth(0);
+		dcm.getColumn(11).setMinWidth(0); // 将第12列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(11).setMaxWidth(0);
+		dcm.getColumn(12).setMinWidth(0); // 将第13列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(12).setMaxWidth(0);
+
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -181,12 +190,19 @@ public class SaleOrderManagerJPanel implements ActionListener, MouseListener, Do
 		String name = input_name.getText();
 		Item item_category = (Item) select_category.getSelectedItem();
 		Item item_warehouse = (Item) select_warehouse.getSelectedItem();
-		String conditionParams[] = { name, item_category.getKey(), item_warehouse.getKey() };
-		String params[] = { "销售单id", "订单号", "商品名称", "销售数量", "所属分类", "所属仓库", "经手人", "分类id", "仓库id" };
-		SaleOrderServiceImpl saleOrderService = new SaleOrderServiceImpl();
+		String[] conditionParams;
+		if(user.getUserIdentity() == 0) {
+			conditionParams = new String[] {name, item_category.getKey(), item_warehouse.getKey(), user.getUserId(), "0"};
+		}
+		else {
+			conditionParams = new String[] {name, item_category.getKey(), item_warehouse.getKey(), user.getUserId(), "1"};
+		}
+		//String conditionParams[] = { name, item_category.getKey(), item_warehouse.getKey(), user.getUserId()};
+		String params[] = { "销售单id", "订单号", "商品名称", "销售数量", "所属分类", "所属仓库", "经手人","销售额","销售日期","商品id", "分类id", "仓库id","用户id"  };
+		SaleslistServiceImpl saleOrderService = new SaleslistServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-			vector = saleOrderService.selectByCondition(conditionParams);
+			vector = saleOrderService.selectSaleslistByCondition(conditionParams);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -196,12 +212,16 @@ public class SaleOrderManagerJPanel implements ActionListener, MouseListener, Do
 		table = new JTable(baseTableModule);
 		Tools.setTableStyle(table);
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
-		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(0).setMinWidth(0); // 将第1列的最小宽度、最大宽度都设置为0
 		dcm.getColumn(0).setMaxWidth(0);
-		dcm.getColumn(7).setMinWidth(0); // 将第8列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(7).setMaxWidth(0);
-		dcm.getColumn(8).setMinWidth(0); // 将第9列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(8).setMaxWidth(0);
+		dcm.getColumn(9).setMinWidth(0); // 将第10列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(9).setMaxWidth(0);
+		dcm.getColumn(10).setMinWidth(0); // 将第11列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(10).setMaxWidth(0);
+		dcm.getColumn(11).setMinWidth(0); // 将第12列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(11).setMaxWidth(0);
+		dcm.getColumn(12).setMinWidth(0); // 将第13列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(12).setMaxWidth(0);
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -214,7 +234,8 @@ public class SaleOrderManagerJPanel implements ActionListener, MouseListener, Do
 		backgroundPanel.add(tablePanel, "Center");
 		backgroundPanel.validate();
 	}
-
+		
+		
 	// 下拉框改变事件
 	@Override
 	public void actionPerformed(ActionEvent e) {

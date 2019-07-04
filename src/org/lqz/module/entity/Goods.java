@@ -1,77 +1,87 @@
 package org.lqz.module.entity;
 
+/**
+ * @ClassName Goods
+ * @Description TODO 定义商品类
+ * @Author TNcarrot_Li
+ * @Date 2019/6/24 15:43
+ * @Version 1.0
+ **/
+
 public class Goods {
-	private String id;
-	private String name;
-	private double price;
-	private String origin;
-	private double stock;
-	private String warehouseId;
-	private String categoryId;
-	private int delFlag;
 
-	public String getId() {
-		return id;
-	}
+    // 定义属性
+    private String goodsId;
+    private String goodsName;
+    private double goodsSellingPrice;
+    private String goodsOrigin;
+    private int goodsInventory;
+    private String warehouseId;
+    private String classificationId;
+    private int goodsDeleteFlag;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    // 定义方法
+    public void setGoodsId(String goodsId) {
+        this.goodsId = goodsId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getGoodsId() {
+        return goodsId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
 
-	public double getPrice() {
-		return price;
-	}
+    public String getGoodsName() {
+        return goodsName;
+    }
 
-	public void setPrice(double price) {
-		this.price = price;
-	}
+    public void setGoodsSellingPrice(double goodsSellingPrice) {
+        this.goodsSellingPrice = goodsSellingPrice;
+    }
 
-	public String getOrigin() {
-		return origin;
-	}
+    public double getGoodsSellingPrice() {
+        return goodsSellingPrice;
+    }
 
-	public void setOrigin(String origin) {
-		this.origin = origin;
-	}
+    public void setGoodsInventory(int goodsInventory) {
+        this.goodsInventory = goodsInventory;
+    }
 
-	public double getStock() {
-		return stock;
-	}
+    public int getGoodsInventory() {
+        return goodsInventory;
+    }
 
-	public void setStock(double stock) {
-		this.stock = stock;
-	}
+    public void setGoodsOrigin(String goodsOrigin) {
+        this.goodsOrigin = goodsOrigin;
+    }
 
-	public String getWarehouseId() {
-		return warehouseId;
-	}
+    public String getGoodsOrigin() {
+        return goodsOrigin;
+    }
 
-	public void setWarehouseId(String warehouseId) {
-		this.warehouseId = warehouseId;
-	}
+    public void setWarehouseId(String warehouseId) {
+        this.warehouseId = warehouseId;
+    }
 
-	public String getCategoryId() {
-		return categoryId;
-	}
+    public String getWarehouseId() {
+        return warehouseId;
+    }
 
-	public void setCategoryId(String categoryId) {
-		this.categoryId = categoryId;
-	}
+    public void setClassificationId(String classificationId) {
+        this.classificationId = classificationId;
+    }
 
-	public int getDelFlag() {
-		return delFlag;
-	}
+    public String getClassificationId() {
+        return classificationId;
+    }
 
-	public void setDelFlag(int delFlag) {
-		this.delFlag = delFlag;
-	}
+    public void setGoodsDeleteFlag(int goodsDeleteFlag) {
+        this.goodsDeleteFlag = goodsDeleteFlag;
+    }
 
+    public int getGoodsDeleteFlag() {
+        return goodsDeleteFlag;
+    }
 }

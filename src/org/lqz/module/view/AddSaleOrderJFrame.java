@@ -26,21 +26,20 @@ import org.lqz.framework.util.BillNo;
 import org.lqz.framework.util.Item;
 import org.lqz.framework.util.MyFont;
 import org.lqz.module.entity.User;
-import org.lqz.module.services.Impl.GoodsServiceImpl;
-import org.lqz.module.services.Impl.SaleOrderServiceImpl;
-import org.lqz.module.services.Impl.StockOrderServiceImpl;
+import org.lqz.module.services.Impl.*;
+
 
 public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionListener {
 
 	// 定义全局组件
 	JPanel backgroundPanel, labelPanel, contentPanel, buttonPanel;
-	JLabel label_name, label_amount, label_category, label_warehouse;
-	JComboBox select_name, select_category, select_warehouse;;
-	JTextField amount;
+	JLabel label_name, label_amount, label_category, label_warehouse, label_date;
+	JComboBox select_name, select_category, select_warehouse;
+	JTextField amount, date;
 	JButton button_add;
 
 	// 商品库存
-	double goods_stock;
+	int goods_stock;
 
 	// 获得屏幕的大小
 	final static int width = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -97,10 +96,11 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 
 	// 初始化商品信息面板
 	public void initContentPanel() {
-		contentPanel = new JPanel(new GridLayout(4, 2));
+		contentPanel = new JPanel(new GridLayout(5, 2));
 
 		label_name = new JLabel("商品名称", JLabel.CENTER);
 		label_amount = new JLabel("销售数量", JLabel.CENTER);
+		label_date = new JLabel("销售日期", JLabel.CENTER);
 		label_category = new JLabel("所属分类", JLabel.CENTER);
 		label_warehouse = new JLabel("所属仓库", JLabel.CENTER);
 
@@ -124,6 +124,7 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 		select_name.addActionListener(this);
 
 		amount = new JTextField("");
+		date = new JTextField("");
 		select_category = new JComboBox();
 		select_category.setEnabled(false);
 		select_warehouse = new JComboBox();
@@ -133,6 +134,8 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 		contentPanel.add(select_name);
 		contentPanel.add(label_amount);
 		contentPanel.add(amount);
+		contentPanel.add(label_date);
+		contentPanel.add(date);
 		contentPanel.add(label_category);
 		contentPanel.add(select_category);
 		contentPanel.add(label_warehouse);
@@ -159,14 +162,17 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 		if (e.getSource() == button_add) {
 
 			String amount_String = amount.getText().trim();
+			String dateString = date.getText().trim();
 			String name = ((Item) select_name.getSelectedItem()).getKey();
 			if ("请选择".equals(name)) {
 				JOptionPane.showMessageDialog(null, "请选择销售商品");
 			} else if (amount_String.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "请输入销售数量");
+			} else if (dateString.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "请输入销售日期");
 			} else {
-				double amount_double = Double.valueOf(amount_String);
-				if (amount_double > goods_stock) {
+				int amount_int = Integer.valueOf(amount_String);
+				if (amount_int > goods_stock) {
 					JOptionPane.showMessageDialog(null, "商品库存不足");
 				} else {
 					int result = 0;
@@ -174,48 +180,36 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 					String billno = BillNo.getBillNo();
 					String handlerId = null;
 					if (user != null) {
-						handlerId = user.getId();
+						handlerId = user.getUserId();
 					}
 					String warehouseId = ((Item) select_warehouse.getSelectedItem()).getKey();
 					String categoryId = ((Item) select_category.getSelectedItem()).getKey();
-					Object[] params = { id, billno, handlerId, categoryId, warehouseId, amount_double, name };
-					SaleOrderServiceImpl saleOrderService = new SaleOrderServiceImpl();
+					//Object[] params = { id, billno, handlerId, categoryId, warehouseId, amount_double, name };
+					Object[] params = {id, billno, handlerId, warehouseId, categoryId, amount_int, name, dateString};
+					SaleslistServiceImpl saleOrderService = new SaleslistServiceImpl();
 					try {
-						result = saleOrderService.insert(params);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					if (result > 0) {
-
-						// 添加出库单
-						int outputresult = 0;
-
-						String outputId = UUID.randomUUID().toString().replaceAll("-", "");
-						String outputBillno = BillNo.getBillNo();
-						Object[] outputParams = { outputId, outputBillno, handlerId, warehouseId, categoryId,
-								amount_double, name };
-						StockOrderServiceImpl stockOrderService = new StockOrderServiceImpl();
-						try {
-							outputresult = stockOrderService.insertStockOutput(outputParams);
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-						if (outputresult > 0) {
+						result = saleOrderService.insertSaleslist(params);  
+						if(result > 0) {
 							int tempresult = 0;
 							GoodsServiceImpl goodsService = new GoodsServiceImpl();
-							Object[] tempparams = { -amount_double, name };
+							Object[] tempparams = { -1*amount_int, name };
 							try {
-								tempresult = goodsService.updateStockById(tempparams);
+								tempresult = goodsService.updateInventoryById(tempparams)   ;
 							} catch (Exception e1) {
+								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							if (tempresult > 0) {
-								JOptionPane.showMessageDialog(null, "销售单添加成功");
+							if(tempresult > 0) {
+								JOptionPane.showMessageDialog(null, "添加成功");
 								this.setVisible(false);
-								
 								parentPanel.refreshTablePanel();
 							}
+							else {
+								JOptionPane.showMessageDialog(null, "添加失败");
+							}
 						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
 				}
 			}
@@ -262,9 +256,9 @@ public class AddSaleOrderJFrame extends JFrame implements MouseListener, ActionL
 			}
 			if (!list_goods.isEmpty()) {
 				for (Object[] object : list_goods) {
-					double amount_double = (Double) object[4];
-					this.goods_stock = amount_double;
-					String amount_String = String.valueOf(amount_double);
+					int amount_int = (Integer) object[4];
+					this.goods_stock = amount_int;
+					String amount_String = String.valueOf(amount_int);
 					amount.setText(amount_String);
 					select_category.removeAllItems();
 					select_category.addItem(new Item((String) object[0], (String) object[1]));

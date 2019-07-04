@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 
 import org.jb2011.lnf.beautyeye.ch3_button.BEButtonUI;
 import org.lqz.framework.util.MyFont;
-import org.lqz.module.services.Impl.StockOrderServiceImpl;
+import org.lqz.module.services.Impl.*;
 
 public class ModifyStockInputJFrame extends JFrame implements MouseListener {
 
@@ -145,9 +145,9 @@ public class ModifyStockInputJFrame extends JFrame implements MouseListener {
 				double amount_double = Double.valueOf(amount_String);
 				String id = (String) table.getValueAt(selectedRow, 0);
 				Object[] params = { amount_double, id };
-				StockOrderServiceImpl stockOrderService = new StockOrderServiceImpl();
+				EntrylistServiceImpl stockOrderService = new EntrylistServiceImpl();
 				try {
-					result = stockOrderService.updateStockInputById(params);
+					result = stockOrderService.updateEntrylistById(params);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}

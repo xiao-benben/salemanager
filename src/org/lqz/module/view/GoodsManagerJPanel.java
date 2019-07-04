@@ -22,7 +22,9 @@ import javax.swing.table.DefaultTableColumnModel;
 import org.lqz.framework.util.BaseTableModule;
 import org.lqz.framework.util.Item;
 import org.lqz.framework.util.Tools;
-import org.lqz.module.services.Impl.CategoryServiceImpl;
+import org.lqz.module.entity.Classification;
+import org.lqz.module.entity.Warehouse;
+import org.lqz.module.services.Impl.*;
 import org.lqz.module.services.Impl.GoodsServiceImpl;
 import org.lqz.module.services.Impl.WarehouseServiceImpl;
 
@@ -90,8 +92,8 @@ public class GoodsManagerJPanel implements ActionListener, MouseListener {
 
 		// 商品种类下拉框
 		select_category = new JComboBox();
-		CategoryServiceImpl categoryService = new CategoryServiceImpl();
-		List<Object[]> list_category = null;
+		ClassificationServiceImpl categoryService = new ClassificationServiceImpl();
+		List<Object []> list_category = null;
 		try {
 			list_category = categoryService.selectAll();
 		} catch (Exception e) {
@@ -99,7 +101,7 @@ public class GoodsManagerJPanel implements ActionListener, MouseListener {
 		}
 		select_category.addItem(new Item("全部", "全部"));
 		if (list_category != null) {
-			for (Object[] object : list_category) {
+			for (Object [] object : list_category) {
 //				System.out.println((String) object[0] + (String) object[1]);
 				select_category.addItem(new Item((String) object[0], (String) object[1]));
 			}
@@ -139,7 +141,7 @@ public class GoodsManagerJPanel implements ActionListener, MouseListener {
 	public void initTablePanel() {
 
 		String conditionParams[] = { "全部", "全部" };
-		String params[] = { "商品id", "名称", "价格", "产地", "所属分类", "所属仓库", "库存", "仓库id", "分类id" };
+		String params[] = { "商品id", "名称", "售价", "产地", "类别", "仓库", "库存", "仓库id", "分类id" };
 		GoodsServiceImpl goodsService = new GoodsServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {

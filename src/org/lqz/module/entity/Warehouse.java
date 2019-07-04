@@ -1,36 +1,50 @@
 package org.lqz.module.entity;
+
 /**
- * 仓库
- * @author Administrator
- *
- */
+ * @ClassName Warehouse
+ * @Description TODO 定义仓库类
+ * @Author TNcarrot_Li
+ * @Date 2019/6/24 15:32
+ * @Version 1.0
+ **/
+
 public class Warehouse {
-	private String id;
-	private String name;
-	private int del_flag;
+    // 定义属性
+    private String warehouseId;
+    private String warehouseName;
+    private String warehousePosition;
+    private int warehouseDeleteFlag;
 
-	public String getId() {
-		return id;
-	}
+    // 定义方法
+    public void setWarehouseId(String warehouseId){
+        this.warehouseId = warehouseId;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getWarehouseId() {
+        return warehouseId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getWarehouseName() {
+        return warehouseName;
+    }
 
-	public int getDel_flag() {
-		return del_flag;
-	}
+    public void setWarehousePosition(String warehousePosition) {
+        this.warehousePosition = warehousePosition;
+    }
 
-	public void setDel_flag(int del_flag) {
-		this.del_flag = del_flag;
-	}
+    public String getWarehousePosition() {
+        return warehousePosition;
+    }
 
+    public void setWarehouseDeleteFlag(int warehouseDeleteFlag) {
+        this.warehouseDeleteFlag = warehouseDeleteFlag;
+    }
+
+    public int getWarehouseDeleteFlag() {
+        return warehouseDeleteFlag;
+    }
 }

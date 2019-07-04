@@ -25,10 +25,10 @@ import javax.swing.table.DefaultTableColumnModel;
 import org.lqz.framework.util.BaseTableModule;
 import org.lqz.framework.util.Item;
 import org.lqz.framework.util.Tools;
+import org.lqz.module.entity.Classification;
 import org.lqz.module.entity.User;
-import org.lqz.module.services.Impl.CategoryServiceImpl;
-import org.lqz.module.services.Impl.StockOrderServiceImpl;
-import org.lqz.module.services.Impl.WarehouseServiceImpl;
+import org.lqz.module.entity.Warehouse;
+import org.lqz.module.services.Impl.*;
 
 public class StockInputManagerJPanel implements ActionListener, MouseListener, DocumentListener {
 
@@ -105,7 +105,7 @@ public class StockInputManagerJPanel implements ActionListener, MouseListener, D
 
 		// 商品种类下拉框
 		select_category = new JComboBox();
-		CategoryServiceImpl categoryService = new CategoryServiceImpl();
+		ClassificationServiceImpl categoryService = new ClassificationServiceImpl();
 		List<Object[]> list_category = null;
 		try {
 			list_category = categoryService.selectAll();
@@ -158,16 +158,17 @@ public class StockInputManagerJPanel implements ActionListener, MouseListener, D
 
 		String conditionParams[] = { "", "全部", "全部", "全部" };
 		if (user != null) {
-			if ("0".equals(user.getIdentity())) {
-				conditionParams[3] = user.getId();
+			if ("0".equals(user.getUserIdentity())) {
+				conditionParams[3] = user.getUserId();
 			}
 		}
-		String params[] = { "入库单id", "订单号", "商品名称", "入库数量", "所属分类", "所属仓库", "经手人", "分类id", "仓库id" };
-		StockOrderServiceImpl stockOrderService = new StockOrderServiceImpl();
+		String params[] = {"入库Id", "入库单号", "商品名称",  "入库数量","入库单价", "所属分类","所属仓库", "经手人", "入库日期"};
+		EntrylistServiceImpl stockOrderService = new EntrylistServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-			vector = stockOrderService.selectStockInputByCondition(conditionParams);
-		} catch (Exception e) {
+			vector = stockOrderService.selectEntrylistByCondition(conditionParams);
+			
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 
@@ -178,10 +179,6 @@ public class StockInputManagerJPanel implements ActionListener, MouseListener, D
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
 		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
 		dcm.getColumn(0).setMaxWidth(0);
-		dcm.getColumn(7).setMinWidth(0); // 将第8列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(7).setMaxWidth(0);
-		dcm.getColumn(8).setMinWidth(0); // 将第9列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(8).setMaxWidth(0);
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -204,16 +201,16 @@ public class StockInputManagerJPanel implements ActionListener, MouseListener, D
 
 		String conditionParams[] = { name, item_category.getKey(), item_warehouse.getKey(), "全部" };
 		if (user != null) {
-			if ("0".equals(user.getIdentity())) {
-				conditionParams[3] = user.getId();
+			if ("0".equals(user.getUserIdentity())) {
+				conditionParams[3] = user.getUserId();
 			}
 		}
 
-		String params[] = { "入库单id", "订单号", "商品名称", "入库数量", "所属分类", "所属仓库", "经手人", "分类id", "仓库id" };
-		StockOrderServiceImpl stockOrderService = new StockOrderServiceImpl();
+		String params[] = { "入库Id", "入库单号", "商品名称",  "入库数量","入库单价", "所属分类","所属仓库", "经手人", "入库日期" };
+		EntrylistServiceImpl stockOrderService = new EntrylistServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-			vector = stockOrderService.selectStockInputByCondition(conditionParams);
+			vector = stockOrderService.selectEntrylistByCondition(conditionParams) ;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -225,10 +222,7 @@ public class StockInputManagerJPanel implements ActionListener, MouseListener, D
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
 		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
 		dcm.getColumn(0).setMaxWidth(0);
-		dcm.getColumn(7).setMinWidth(0); // 将第8列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(7).setMaxWidth(0);
-		dcm.getColumn(8).setMinWidth(0); // 将第9列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(8).setMaxWidth(0);
+
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -275,9 +269,9 @@ public class StockInputManagerJPanel implements ActionListener, MouseListener, D
 				int result = JOptionPane.showConfirmDialog(null, "是否确定删除？", "用户提示", JOptionPane.YES_NO_OPTION);
 				if (result == 0) {
 					String[] params = { id };
-					StockOrderServiceImpl stockOrderService = new StockOrderServiceImpl();
+					EntrylistServiceImpl stockOrderService = new EntrylistServiceImpl();
 					try {
-						int tempresult = stockOrderService.deleteStockInputById(params);
+						int tempresult = stockOrderService.deleteEntrylistById(params)   ;
 						if (tempresult > 0) {
 							JOptionPane.showMessageDialog(null, "入库单删除成功！");
 							refreshTablePanel();

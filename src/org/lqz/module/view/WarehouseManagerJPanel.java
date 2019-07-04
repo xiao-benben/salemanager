@@ -78,11 +78,12 @@ public class WarehouseManagerJPanel implements MouseListener {
 	// 初始化数据表格面板
 	public void initTablePanel() {
 
-		String params[] = { "仓库id", "序号", "仓库名称" };
+		//String params[] = { "序号", "仓库名称", "仓库所在地" };
+		String params[] = { "序号", "仓库Id", "仓库名称", "仓库所在地" };
 		WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-			vector = warehouseService.selectAllVexctor();
+			vector = warehouseService.selectAllVector() ;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -92,8 +93,8 @@ public class WarehouseManagerJPanel implements MouseListener {
 		table = new JTable(baseTableModule);
 		Tools.setTableStyle(table);
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
-		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(0).setMaxWidth(0);
+		dcm.getColumn(1).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(1).setMaxWidth(0);
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -111,11 +112,12 @@ public class WarehouseManagerJPanel implements MouseListener {
 
 		backgroundPanel.remove(tablePanel);
 
-		String params[] = { "仓库id", "序号", "仓库名称" };
+		//String params[] = { "仓库id", "序号", "仓库名称" };
+		String params[] = { "序号", "仓库Id", "仓库名称", "仓库所在地" };
 		WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-			vector = warehouseService.selectAllVexctor();
+			vector = warehouseService.selectAllVector(); 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -125,8 +127,8 @@ public class WarehouseManagerJPanel implements MouseListener {
 		table = new JTable(baseTableModule);
 		Tools.setTableStyle(table);
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
-		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(0).setMaxWidth(0);
+		dcm.getColumn(1).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(1).setMaxWidth(0);
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -146,7 +148,7 @@ public class WarehouseManagerJPanel implements MouseListener {
 		if (e.getSource() == tool_add) {
 			new AddWarehouseJFrame(this);
 		} else if (e.getSource() == tool_modify) {
-			int row = table.getSelectedRow();
+			int row = table.getSelectedRow();   //用鼠标选中
 			if (row < 0) {
 				JOptionPane.showMessageDialog(null, "请选择仓库");
 			} else {
@@ -158,16 +160,20 @@ public class WarehouseManagerJPanel implements MouseListener {
 			if (row < 0) {
 				JOptionPane.showMessageDialog(null, "请选择仓库");
 			} else {
-				String id = (String) table.getValueAt(row, 0);
+				String id = table.getValueAt(row, 1).toString();
 				int result = JOptionPane.showConfirmDialog(null, "是否确定删除？", "用户提示", JOptionPane.YES_NO_OPTION);
 				if (result == 0) {
-					String[] params = { id };
+					String[] params = { id, id };
+					System.out.println(id);
 					WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
 					try {
 						int tempresult = warehouseService.deleteById(params);
 						if (tempresult > 0) {
 							JOptionPane.showMessageDialog(null, "仓库删除成功！");
 							refreshTablePanel();
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "仓库删除失败！");
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();

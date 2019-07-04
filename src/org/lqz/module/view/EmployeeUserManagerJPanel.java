@@ -102,12 +102,12 @@ public class EmployeeUserManagerJPanel implements MouseListener {
 		label_identify.setFont(MyFont.Static);
 
 		if (user != null) {
-			username.setText(user.getName());
-			password.setText(user.getPassword());
+			username.setText(user.getUserName());
+			password.setText(user.getUserPassword());
 			String identifyString = "";
-			if (user.getIdentity().equals("1")) {
+			if (user.getUserIdentity() == 1) {
 				identifyString = "管理员";
-			} else if (user.getIdentity().equals("0")) {
+			} else if (user.getUserIdentity() == 0 ){
 				identifyString = "普通员工";
 			}
 			identify.setText(identifyString);
@@ -175,7 +175,7 @@ public class EmployeeUserManagerJPanel implements MouseListener {
 				JOptionPane.showMessageDialog(null, "原始密码不能为空");
 			} else {
 				if (user != null) {
-					if (!input_password.equals(user.getPassword())) {
+					if (!input_password.equals(user.getUserPassword())) {
 						JOptionPane.showMessageDialog(null, "原始密码有误");
 					} else {
 						JOptionPane.showMessageDialog(null, "验证通过，请您修改信息");
@@ -196,7 +196,7 @@ public class EmployeeUserManagerJPanel implements MouseListener {
 			} else if (string_password.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "用户密码不能为空");
 			} else {
-				String params[] = { username.getText(), password.getText(), user.getId() };
+				String params[] = { username.getText(), password.getText(), user.getUserId() };
 				UserServiceImpl userService = new UserServiceImpl();
 				int result = 0;
 				try {

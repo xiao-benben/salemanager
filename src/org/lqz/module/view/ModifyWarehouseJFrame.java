@@ -113,8 +113,8 @@ public class ModifyWarehouseJFrame extends JFrame implements MouseListener {
 				JOptionPane.showMessageDialog(null, "请输入仓库名称");
 			} else {
 				int result = 0;
-				String id = (String) table.getValueAt(selectedRow, 0);
-				Object[] params = { name_String, id };
+				String id = (String) table.getValueAt(selectedRow, 1);
+				Object[] params = {name_String, id};
 				WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
 				try {
 					result = warehouseService.updateById(params);
@@ -125,6 +125,9 @@ public class ModifyWarehouseJFrame extends JFrame implements MouseListener {
 					JOptionPane.showMessageDialog(null, "仓库修改成功");
 					this.setVisible(false);
 					parentPanel.refreshTablePanel();
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "仓库修改失败");
 				}
 			}
 		}

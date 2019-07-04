@@ -11,6 +11,7 @@ import javax.swing.*;
 import org.lqz.framework.util.ImagePanel;
 import org.lqz.framework.util.MyFont;
 import org.lqz.framework.util.WindowOpacity;
+import org.lqz.main.Entrance;
 import org.lqz.module.entity.User;
 
 public class IndexJFrame extends JFrame implements MouseListener, ActionListener {
@@ -31,6 +32,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 	// 定义全局组件
 	JPanel backgroundPanel, topPanel, topMenu, topPrompt, centerPanel, subPanel, subMenu;
 	JTabbedPane jTabbedPane;
+	JButton logout;
 
 	JLabel home, stock, purchase_sale_stock, userManager;
 
@@ -53,7 +55,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 
 		initBackgroundPanel();
 
-		this.setTitle("销售管理系统");
+		this.setTitle("商店销售管理系统");
 		this.setSize((int) (width * 0.8f), (int) (height * 0.8f));
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);	// 此窗口将置于屏幕的中央。
@@ -94,11 +96,11 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 		topMenu.setPreferredSize(new Dimension(500, 40));
 		topMenu.setOpaque(false);
 
-		String[] nameStrings = { "首页", "库存", "进销存管理", "用户管理" };
+		String[] nameStrings = { "首页", "商品信息", "进销存管理", "人员信息管理" };
 
 		home = CreateMenuLabel(home, nameStrings[0], "home", topMenu);
 		home.setName("home");
-		stock = CreateMenuLabel(stock, nameStrings[1], "stock", topMenu);
+		stock = CreateMenuLabel(stock, nameStrings[1], "baseData", topMenu);
 		stock.setName("stock");
 		purchase_sale_stock = CreateMenuLabel(purchase_sale_stock, nameStrings[2], "purchase_sale_stock", topMenu);
 		purchase_sale_stock.setName("purchase_sale_stock");
@@ -127,16 +129,21 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 		Icon icon = new ImageIcon("image/male.png");
 		JLabel label = new JLabel(icon);
 		if (user != null) {
-			label.setText("<html><font color='black'>欢迎您，</font><font color='#336699'><b>" + this.user.getName()
+			label.setText("<html><font color='black'>欢迎您，</font><font color='#336699'><b>" + this.user.getUserName()
 					+ "</b></font></html>");
 		} else {
 			label.setText("<html><font color='black'>欢迎您，</font><font color='#336699'><b></b></font></html>");
 		}
 		label.setFont(MyFont.Static);
+		
+		logout = new JButton("注销");
+		logout.addMouseListener(this);
+		
 		topPrompt = new JPanel();
-		topPrompt.setPreferredSize(new Dimension(180, 40));
+		topPrompt.setPreferredSize(new Dimension(230,40));
 		topPrompt.setOpaque(false);
 		topPrompt.add(label);
+		topPrompt.add(logout);
 	}
 
 	// 初始化中心面板
@@ -161,7 +168,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 
 		centerPanel.removeAll();
 		try {
-			Image bgimg = ImageIO.read(new File("image/logo1.png"));
+			Image bgimg = ImageIO.read(new File("image/indexbackground.png"));
 			ImagePanel centerBackground = new ImagePanel(bgimg);
 			centerPanel.add(centerBackground, "Center");
 		} catch (IOException e) {
@@ -169,7 +176,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 		}
 	}
 
-	// 创建库存面板
+	// 创建商品信息面板
 	public void creatstockTab() {
 
 		centerPanel.removeAll();
@@ -183,7 +190,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 		centerPanel.add(jTabbedPane, "Center");
 	}
 
-	// 创建进销存管理面板
+	// 创建进存管理面板
 	public void creatpurchaseSaleStockTab() {
 
 		centerPanel.removeAll();
@@ -195,7 +202,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 
 		jTabbedPane.addTab("销售单", new SaleOrderManagerJPanel(user).backgroundPanel);
 		jTabbedPane.addTab("入库单", new StockInputManagerJPanel(user).backgroundPanel);
-		//jTabbedPane.addTab("出库单", new StockOutputManagerJPanel(user).backgroundPanel);
+		
 		jTabbedPane.addTab("仓库管理", new WarehouseManagerJPanel().backgroundPanel);
 
 		centerPanel.add(jTabbedPane, "Center");
@@ -212,7 +219,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 		jTabbedPane.setFont(MyFont.Static);
 
 	//	jTabbedPane.addTab("用户管理", new EmployeeUserManagerJPanel(user, this).backgroundPanel);
-		jTabbedPane.addTab("用户管理", new UserManagerJPanel(user).backgroundPanel);
+		jTabbedPane.addTab("用户管理", new UserManagerJPanel(user,this).backgroundPanel);
 		centerPanel.add(jTabbedPane, "Center");
 	}
 
@@ -224,17 +231,17 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 			sign_home = 1;
 			creatHome();
 			home.setText("<html><font color='#336699' style='font-weight:bold'>" + "首页" + "</font>&nbsp;</html>");
-			stock.setText("<html><font color='black'>" + "库存" + "</font>&nbsp;</html>");
+			stock.setText("<html><font color='black'>" + "商品信息" + "</font>&nbsp;</html>");
 			purchase_sale_stock.setText("<html><font color='black'>" + "进销存管理" + "</font>&nbsp;</html>");
-			userManager.setText("<html><font color='black'>" + "用户管理" + "</font>&nbsp;</html>");
+			userManager.setText("<html><font color='black'>" + "人员信息管理" + "</font>&nbsp;</html>");
 		} else if (e.getSource() == stock) {
 			initSign();
 			sign_stock = 1;
 			creatstockTab();
-			stock.setText("<html><font color='#336699' style='font-weight:bold'>" + "库存" + "</font>&nbsp;</html>");
+			stock.setText("<html><font color='#336699' style='font-weight:bold'>" + "商品信息" + "</font>&nbsp;</html>");
 			home.setText("<html><font color='black'>" + "首页" + "</font>&nbsp;</html>");
 			purchase_sale_stock.setText("<html><font color='black'>" + "进销存管理" + "</font>&nbsp;</html>");
-			userManager.setText("<html><font color='black'>" + "用户管理" + "</font>&nbsp;</html>");
+			userManager.setText("<html><font color='black'>" + "人员信息管理" + "</font>&nbsp;</html>");
 		} else if (e.getSource() == purchase_sale_stock) {
 			initSign();
 			sign_purchase_sale_stock = 1;
@@ -242,16 +249,19 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 			purchase_sale_stock.setText(
 					"<html><font color='#336699' style='font-weight:bold'>" + "进销存管理" + "</font>&nbsp;</html>");
 			home.setText("<html><font color='black'>" + "首页" + "</font>&nbsp;</html>");
-			stock.setText("<html><font color='black'>" + "库存" + "</font>&nbsp;</html>");
-			userManager.setText("<html><font color='black'>" + "用户管理" + "</font>&nbsp;</html>");
+			stock.setText("<html><font color='black'>" + "商品信息" + "</font>&nbsp;</html>");
+			userManager.setText("<html><font color='black'>" + "人员信息管理" + "</font>&nbsp;</html>");
 		} else if (e.getSource() == userManager) {
 			initSign();
 			sign_userManager = 1;
 			creatUserManagerTab();
-			userManager.setText("<html><font color='#336699' style='font-weight:bold'>" + "用户管理" + "</font>&nbsp;</html>");
+			userManager.setText("<html><font color='#336699' style='font-weight:bold'>" + "人员信息管理" + "</font>&nbsp;</html>");
 			home.setText("<html><font color='black'>" + "首页" + "</font>&nbsp;</html>");
-			stock.setText("<html><font color='black'>" + "库存" + "</font>&nbsp;</html>");
+			stock.setText("<html><font color='black'>" + "商品信息" + "</font>&nbsp;</html>");
 			purchase_sale_stock.setText("<html><font color='black'>" + "进销存管理" + "</font>&nbsp;</html>");
+		} else if(e.getSource() == logout){
+			this.setVisible(false);
+			Entrance.main(null);
 		} else {
 			System.out.println("ok");
 		}
@@ -267,13 +277,13 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 			home.setText("<html><font color='#336699' style='font-weight:bold'>" + "首页" + "</font>&nbsp;</html>");
 		} else if (e.getSource() == stock) {
 			stock.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			stock.setText("<html><font color='#336699' style='font-weight:bold'>" + "库存" + "</font>&nbsp;</html>");
+			stock.setText("<html><font color='#336699' style='font-weight:bold'>" + "商品信息" + "</font>&nbsp;</html>");
 		} else if (e.getSource() == purchase_sale_stock) {
 			purchase_sale_stock.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			purchase_sale_stock.setText("<html><font color='#336699' style='font-weight:bold'>" + "进销存管理" + "</font>&nbsp;</html>");
 		} else if (e.getSource() == userManager) {
 			userManager.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			userManager.setText("<html><font color='#336699' style='font-weight:bold'>" + "用户管理" + "</font>&nbsp;</html>");
+			userManager.setText("<html><font color='#336699' style='font-weight:bold'>" + "人员信息管理" + "</font>&nbsp;</html>");
 		}
 
 	}
@@ -287,7 +297,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 			}
 		} else if (e.getSource() == stock) {
 			if (sign_stock == 0) {
-				stock.setText("<html><font color='black'>" + "库存" + "</font>&nbsp;</html>");
+				stock.setText("<html><font color='black'>" + "商品信息" + "</font>&nbsp;</html>");
 			}
 		} else if (e.getSource() == purchase_sale_stock) {
 			if (sign_purchase_sale_stock == 0) {
@@ -295,7 +305,7 @@ public class IndexJFrame extends JFrame implements MouseListener, ActionListener
 			}
 		} else if (e.getSource() == userManager) {
 			if (sign_userManager == 0) {
-				userManager.setText("<html><font color='black'>" + "用户管理" + "</font>&nbsp;</html>");
+				userManager.setText("<html><font color='black'>" + "人员信息管理" + "</font>&nbsp;</html>");
 			}
 		}
 

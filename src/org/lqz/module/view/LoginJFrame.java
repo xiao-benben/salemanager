@@ -1,4 +1,4 @@
-package org.lqz.module.view;
+ package org.lqz.module.view;
 //只改变了这一个类  在image中加了一个background.jpg
 import org.jb2011.lnf.beautyeye.ch3_button.BEButtonUI;
 import org.lqz.framework.util.ImagePanel;
@@ -25,7 +25,7 @@ public class LoginJFrame extends JFrame implements MouseListener, FocusListener 
 	JTextField username = new JTextField(20);
 	JPasswordField password = new JPasswordField(20);
 	ImagePanel backgroundPanel = null;
-	JButton button_login, button_reset;
+	JButton button_login;
 
 	public LoginJFrame() {
 		
@@ -35,12 +35,11 @@ public class LoginJFrame extends JFrame implements MouseListener, FocusListener 
 		Image backgrounImage = null;
 		try {
 			//读取背景图片
-			//backgrounImage = ImageIO.read(new File("image/loginbackground.png"));
 			backgrounImage = ImageIO.read(new File("image/background.jpg"));
 			Image imgae = ImageIO.read(new File("image/logo.png"));
 			
 			
-			//为什么直接加在了左上角？？？？
+			//直接加在了左上角
 			this.setIconImage(imgae);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -52,7 +51,6 @@ public class LoginJFrame extends JFrame implements MouseListener, FocusListener 
 		y - 组件的新 y 坐标
 		width - 组件的新 width
 		height - 组件的新 height*/
-		//username.setBounds(230, 197, 173, 30);
 		username.setBounds(120, 217, 373, 40);
 	    username.setOpaque(false);// 设置控件透明
 //		username.setBounds(240, 220, 173, 30);
@@ -61,7 +59,7 @@ public class LoginJFrame extends JFrame implements MouseListener, FocusListener 
 		username.setFont(MyFont.Static);
 		
 		
-		//设置了焦点监视器  需要查看具体实现了什么功能，在那个位置
+		//设置了焦点监视器
 		username.addFocusListener(this);
 		username.setText("用户名/账号");
 		
@@ -73,39 +71,20 @@ public class LoginJFrame extends JFrame implements MouseListener, FocusListener 
 		password.setFont(MyFont.Static);
 		password.addFocusListener(this);		
 		password.setText("密码");
-		//没啥用
 		password.setEchoChar('\0');
 		
 		button_login = new JButton();
 		button_login.setBounds(45, 320, 280, 40);
 		button_login.setContentAreaFilled(false);
 		
-
-		
-		
-		
-		
-		//BEButtonUI?????
-
-	//	button_login.setUI(new BEButtonUI().setNormalColor(BEButtonUI.NormalColor.normal));
-		//设置按钮前景颜色
-//		button_login.setForeground(Color.white);
-	//	button_login.setFont(MyFont.Static);
 		button_login.addMouseListener(this);
-		//button_login.setOpaque(false);// 设置控件透明
+		button_login.setOpaque(false);// 设置控件透明
 		
-/*		button_reset = new JButton("重置");
-		button_reset.setBounds(330, 320, 70, 27);
-//		button_reset.setBounds(340, 350, 70, 27);
-		button_reset.setUI(new BEButtonUI().setNormalColor(BEButtonUI.NormalColor.red));
-		button_reset.setForeground(Color.white);
-		button_reset.setFont(MyFont.Static);
-		button_reset.addMouseListener(this);
-*/
+
 		backgroundPanel.add(username);
 		backgroundPanel.add(password);
 		backgroundPanel.add(button_login);
-	//	backgroundPanel.add(button_reset);
+
 		
 		this.add(backgroundPanel);
 		this.setTitle("  商店销售管理系统");
@@ -139,7 +118,7 @@ public class LoginJFrame extends JFrame implements MouseListener, FocusListener 
 					User user = userService.selectOne(params);
 					if (user == null) {
 						JOptionPane.showMessageDialog(null, "用户名密码有误");
-					} else if (user.getIdentity().equals("1")) {
+					} else if (user.getUserIdentity() == 1) {
 						this.setVisible(false);
 						//用户密码验证正确   进入IndexJFrame界面
 						new IndexJFrame(user);
@@ -152,12 +131,8 @@ public class LoginJFrame extends JFrame implements MouseListener, FocusListener 
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-			}//重置功能
-		} else if (e.getSource() == button_reset) {
-			username.setText("用户名/账号");
-			password.setText("密码");
-			password.setEchoChar('\0');
-		}
+			}
+		} 
 
 	}
 

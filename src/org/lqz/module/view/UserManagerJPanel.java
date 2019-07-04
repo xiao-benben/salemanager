@@ -17,8 +17,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 
 import org.lqz.framework.util.BaseTableModule;
+import org.lqz.framework.util.Item;
 import org.lqz.framework.util.Tools;
 import org.lqz.module.entity.User;
+//import org.lqz.module.services.Impl.StockOrderServiceImpl;
+import org.lqz.module.services.Impl.UserServiceImpl;
 import org.lqz.module.services.Impl.WarehouseServiceImpl;
 
 /**
@@ -34,8 +37,10 @@ public class UserManagerJPanel implements MouseListener  {
 	JScrollPane jScrollPane;
 	JLabel tool_add, tool_modify, tool_delete;
 	User user = null;
-	public UserManagerJPanel(User user) {
+	JFrame jframe;
+	public UserManagerJPanel(User user,JFrame jframe) {
 		this.user = user;
+		this.jframe = jframe;
 		backgroundPanel = new JPanel(new BorderLayout());
 
 		initTopPanel();
@@ -63,7 +68,7 @@ public class UserManagerJPanel implements MouseListener  {
 		Icon icon_add = new ImageIcon("image/add.png");
 		tool_add = new JLabel(icon_add);
 		tool_add.setToolTipText("增加人员");
-	//	tool_add.addMouseListener(this);
+		tool_add.addMouseListener(this);
 
 		Icon icon_modify = new ImageIcon("image/modify.png");
 		tool_modify = new JLabel(icon_modify);
@@ -73,7 +78,7 @@ public class UserManagerJPanel implements MouseListener  {
 		Icon icon_delete = new ImageIcon("image/delete.png");
 		tool_delete = new JLabel(icon_delete);
 		tool_delete.setToolTipText("删除人员");
-	//	tool_delete.addMouseListener(this);
+		tool_delete.addMouseListener(this);
 
 		toolPanel.add(tool_add);
 		toolPanel.add(tool_modify);
@@ -86,11 +91,11 @@ public class UserManagerJPanel implements MouseListener  {
 	// 初始化数据表格面板
 	public void initTablePanel() {
 
-		String params[] = {"用户ID",  "日期", "姓名", "销售额" };
-	//	WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
+		String params[] = {"用户ID",  "用户姓名", "销售单号", "销售日期", "商品ID", "销售额" };
+		UserServiceImpl userservice = new UserServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-	//		vector = warehouseService.selectAllVexctor();
+			vector = userservice.selectByCondition(params);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -102,6 +107,10 @@ public class UserManagerJPanel implements MouseListener  {
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
 		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
 		dcm.getColumn(0).setMaxWidth(0);
+		dcm.getColumn(2).setMinWidth(0); 
+		dcm.getColumn(2).setMaxWidth(0);
+		dcm.getColumn(4).setMinWidth(0); 
+		dcm.getColumn(4).setMaxWidth(0);
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -111,15 +120,16 @@ public class UserManagerJPanel implements MouseListener  {
 
 		tablePanel.add(jScrollPane);
 
-		backgroundPanel.add(tablePanel, "Center");
+		backgroundPanel.add(tablePanel, "South");
 	}
+	
 	public void initTablePanel1() {
 
-		String params[] = {"用户ID",  "日期", "利润",  };
-	//	WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
+		String params[] = { "日期", "利润",  };
+		UserServiceImpl userservice = new UserServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-	//		vector = warehouseService.selectAllVexctor();
+			vector = userservice.selectProfit(params);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -129,8 +139,8 @@ public class UserManagerJPanel implements MouseListener  {
 		table = new JTable(baseTableModule);
 		Tools.setTableStyle(table);
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
-		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
-		dcm.getColumn(0).setMaxWidth(0);
+		/*dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
+		dcm.getColumn(0).setMaxWidth(0);*/
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -140,19 +150,18 @@ public class UserManagerJPanel implements MouseListener  {
 
 		tablePanel1.add(jScrollPane);
 
-		backgroundPanel.add(tablePanel1, "South");
+		backgroundPanel.add(tablePanel1, "Center");
 	}
 
 	// 更新数据表格
-	/*public void refreshTablePanel() {
+	public void refreshTablePanel() {
 
 		backgroundPanel.remove(tablePanel);
-
-		String params[] = { "仓库id", "序号", "仓库名称" };
-		WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
+		String params[] = {"用户ID",  "用户姓名", "销售单号", "销售日期", "商品ID", "销售额" };
+		UserServiceImpl userservice = new UserServiceImpl();
 		Vector<Vector> vector = new Vector<Vector>();
 		try {
-			vector = warehouseService.selectAllVexctor();
+			vector = userservice.selectByCondition(params);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -164,6 +173,10 @@ public class UserManagerJPanel implements MouseListener  {
 		DefaultTableColumnModel dcm = (DefaultTableColumnModel) table.getColumnModel();// 获取列模型
 		dcm.getColumn(0).setMinWidth(0); // 将第一列的最小宽度、最大宽度都设置为0
 		dcm.getColumn(0).setMaxWidth(0);
+		dcm.getColumn(2).setMinWidth(0); 
+		dcm.getColumn(2).setMaxWidth(0);
+		dcm.getColumn(4).setMinWidth(0); 
+		dcm.getColumn(4).setMaxWidth(0);
 
 		jScrollPane = new JScrollPane(table);
 		Tools.setJspStyle(jScrollPane);
@@ -173,45 +186,26 @@ public class UserManagerJPanel implements MouseListener  {
 
 		tablePanel.add(jScrollPane);
 
-		backgroundPanel.add(tablePanel, "Center");
+		backgroundPanel.add(tablePanel, "South");
 		backgroundPanel.validate();
-	}*/
+		
+	}
 
 	// 鼠标点击事件
 //	@Override
 	public void mouseClicked(MouseEvent e) {
-	//	if (e.getSource() == tool_add) {
-	//		new AddWarehouseJFrame(this);
-	//	}
+		if (e.getSource() == tool_add) {
+			new AddUserJFrame(this);
+		}
 		
-		if (e.getSource() == tool_modify) {
-			new ModifyUserInfomationJFrame(user, this);
-	//	new	 EmployeeUserManagerJPanel();
-		
-	//	 new EmployeeUserManagerJPanel(user, EmployeeUserManagerJFrame).backgroundPanel);
+		else if (e.getSource() == tool_modify) {
+			new ModifyUserInfomationJFrame(user, this,this.jframe);
+	
 
-		} /*else if (e.getSource() == tool_delete) {
-			int row = table.getSelectedRow();
-			if (row < 0) {
-				JOptionPane.showMessageDialog(null, "请选择仓库");
-			} else {
-				String id = (String) table.getValueAt(row, 0);
-				int result = JOptionPane.showConfirmDialog(null, "是否确定删除？", "用户提示", JOptionPane.YES_NO_OPTION);
-				if (result == 0) {
-					String[] params = { id };
-					WarehouseServiceImpl warehouseService = new WarehouseServiceImpl();
-					try {
-						int tempresult = warehouseService.deleteById(params);
-						if (tempresult > 0) {
-							JOptionPane.showMessageDialog(null, "仓库删除成功！");
-							refreshTablePanel();
-						}
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		}*/
+		} else if (e.getSource() == tool_delete) {
+			new DeleteUserJFrame(user,this);	
+			refreshTablePanel();
+		}
 	}
 
 	// 鼠标划入事件
